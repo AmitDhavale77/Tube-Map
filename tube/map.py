@@ -100,49 +100,14 @@ class TubeMap:
         data = self.load_json(filepath)
         #print("data", data)
 
-
-        with open(filepath, "r") as jsonfile: 
-
-            data = json.load(jsonfile)
             # for station
-            station_ls = data.get("stations")
+        station_ls = data.get("stations")
 
-            self.form_station_dict(data)
+        self.form_station_dict(data)
 
-            self.form_lines_dict(data)
+        self.form_lines_dict(data)
 
-            self.form_connections_list(data)
-            # for station in station_ls:
-
-            #     zone = station.get("zone")
-            #     zone_set = set()
-                
-            #     if "." in zone:
-            #         ind = zone.find(".")
-            #         zone_set.add(int(zone[:ind]))
-            #         zone_set.add(int(zone[:ind])+1)
-            #     else:
-            #         zone_set.add(int(zone))
-
-            #     print("Zoneset", zone_set)
-
-            #     self.stations[station.get("id")] = Station(station.get("id"), station.get("name"), zone_set)
-
-            # line_ls = data.get("lines")
-
-            # for line in line_ls:
-            #     self.lines[line.get("line")] = Line(line.get("line"), line.get("name"))
-            
-            # connection_ls = data.get("connections")
-
-            # for connection in connection_ls:
-
-            #     station_set = set()
-            #     station_set.add(self.stations.get(connection.get("station1")))
-            #     station_set.add(self.stations.get(connection.get("station2")))
-
-            #     self.connections.append(Connection(station_set, self.lines.get(connection.get("line")), int(connection.get("time"))))
-           
+        self.form_connections_list(data)
 
         return
 
