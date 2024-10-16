@@ -1,5 +1,5 @@
 import json
-from components import Station, Line, Connection
+from .components import Station, Line, Connection
 
 class TubeMap:
     """
@@ -25,9 +25,13 @@ class TubeMap:
 
 
     def load_json(self, filepath):
-        with open(filepath, "r") as jsonfile: 
-            data = json.load(jsonfile)
-        return data
+        try:
+            with open(filepath, "r") as jsonfile:
+                data = json.load(jsonfile)
+            return data
+        except FileNotFoundError:
+            
+            return None
 
 
     def form_station_dict(self, data):
@@ -100,6 +104,9 @@ class TubeMap:
         data = self.load_json(filepath)
         #print("data", data)
 
+        if data is None:
+            return
+
             # for station
         station_ls = data.get("stations")
 
@@ -118,6 +125,8 @@ def test_import():
     
     # view one example Station
     print(tubemap.stations[list(tubemap.stations)[0]])
+
+    print("list", list(tubemap.stations)[0])
     
     # view one example Line
     print(tubemap.lines[list(tubemap.lines)[0]])

@@ -1,3 +1,11 @@
+import sys
+import os 
+#print(sys.path)
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+from tube.map import TubeMap
+
 class NeighbourGraphBuilder:
     """
     Task 2: Complete the definition of the NeighbourGraphBuilder class by:
@@ -71,7 +79,37 @@ class NeighbourGraphBuilder:
                 the method should return an empty dict.
         """
         # TODO: Complete this method
-        return dict()
+        graph = {}
+
+        #station_ls = [station for station in tubemap.connections[0].stations]
+
+
+
+        for station_id in list(tubemap.stations): #contains list of all station ids , get_station_ids
+            
+            neighbours = {} #to store neighbouring stations
+            for connect in tubemap.connections: # Iterates on each connection obj
+                station_ls = [station for station in connect.stations] #converts the station set into list
+
+                curr_stat_id = [stat.id for stat in station_ls]
+                
+                if station_id == station_ls[0].id:
+
+                    if neighbours.get(station_ls[1].id):
+                        neighbours[station_ls[1].id].append(connect)
+                    else:
+                        neighbours[station_ls[1].id] = [connect]
+                
+                if station_id == station_ls[1].id:
+
+                    if neighbours.get(station_ls[0].id):
+                        neighbours[station_ls[0].id].append(connect)
+                    else:
+                        neighbours[station_ls[0].id] = [connect]
+                
+            graph[station_id] = neighbours
+            
+        return graph
 
 
 def test_graph():
@@ -82,7 +120,7 @@ def test_graph():
     graph_builder = NeighbourGraphBuilder()
     graph = graph_builder.build(tubemap)
 
-    print(graph)
+    print(graph["110"])
 
 
 if __name__ == "__main__":
