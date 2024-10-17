@@ -16,6 +16,38 @@ class NeighbourGraphBuilder:
     def __init__(self):
         pass
 
+    def get_station_ids(self, tubemap):
+
+        return list(tubemap.stations)
+
+    def is_same_station_name(self, station_id, name_id):
+
+        return station_id == name_id
+
+
+    def get_neighbours_for_connections(self, station_id, connections):
+        neighbours = {} #to store neighbouring stations, to get neighbours of the station
+        for connect in connections: # Iterates on each connection obj
+            station_ls = [station for station in connect.stations] #converts the station set into list
+
+            #curr_stat_id = [stat.id for stat in station_ls]
+
+            if self.is_same_station_name(station_id, station_ls[0].id): #station_id == station_ls[0].id:
+
+                if neighbours.get(station_ls[1].id):
+                    neighbours[station_ls[1].id].append(connect)
+                else:
+                    neighbours[station_ls[1].id] = [connect]
+            
+            if self.is_same_station_name(station_id, station_ls[1].id):
+
+                if neighbours.get(station_ls[0].id):
+                    neighbours[station_ls[0].id].append(connect)
+                else:
+                    neighbours[station_ls[0].id] = [connect]
+            
+        return neighbours
+    
     def build(self, tubemap):
         """ Builds a graph encoding neighbouring connections between stations.
 
@@ -83,31 +115,30 @@ class NeighbourGraphBuilder:
 
         #station_ls = [station for station in tubemap.connections[0].stations]
 
-
-
-        for station_id in list(tubemap.stations): #contains list of all station ids , get_station_ids
+        for station_id in self.get_station_ids(tubemap):  #list(tubemap.stations): contains list of all station ids , get_station_ids
             
-            neighbours = {} #to store neighbouring stations
-            for connect in tubemap.connections: # Iterates on each connection obj
-                station_ls = [station for station in connect.stations] #converts the station set into list
+            #neighbours = {} #to store neighbouring stations, to get neighbours of the station
+            # for connect in tubemap.connections: # Iterates on each connection obj
+            #     station_ls = [station for station in connect.stations] #converts the station set into list
 
-                curr_stat_id = [stat.id for stat in station_ls]
-                
-                if station_id == station_ls[0].id:
+            #     #curr_stat_id = [stat.id for stat in station_ls]
 
-                    if neighbours.get(station_ls[1].id):
-                        neighbours[station_ls[1].id].append(connect)
-                    else:
-                        neighbours[station_ls[1].id] = [connect]
-                
-                if station_id == station_ls[1].id:
+            #     if station_id == station_ls[0].id:
 
-                    if neighbours.get(station_ls[0].id):
-                        neighbours[station_ls[0].id].append(connect)
-                    else:
-                        neighbours[station_ls[0].id] = [connect]
+            #         if neighbours.get(station_ls[1].id):
+            #             neighbours[station_ls[1].id].append(connect)
+            #         else:
+            #             neighbours[station_ls[1].id] = [connect]
                 
-            graph[station_id] = neighbours
+            #     if station_id == station_ls[1].id:
+
+            #         if neighbours.get(station_ls[0].id):
+            #             neighbours[station_ls[0].id].append(connect)
+            #         else:
+            #             neighbours[station_ls[0].id] = [connect]
+                
+            graph[station_id] = self.get_neighbours_for_connections(station_id, 
+                                                                tubemap.connections)
             
         return graph
 
@@ -120,7 +151,9 @@ def test_graph():
     graph_builder = NeighbourGraphBuilder()
     graph = graph_builder.build(tubemap)
 
-    print(graph["110"])
+    print(graph["11"]["163"])
+
+    print(graph["163"]["11"])
 
 
 if __name__ == "__main__":

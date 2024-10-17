@@ -1,3 +1,8 @@
+import sys
+import os 
+from heapq import heapify, heappop, heappush
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from network.graph import NeighbourGraphBuilder
 
 class PathFinder:
@@ -20,7 +25,9 @@ class PathFinder:
         
         # Feel free to add anything else needed here.
         
-        
+
+
+
     def get_shortest_path(self, start_station_name, end_station_name):
         """ Find ONE shortest path from start_station_name to end_station_name.
         
@@ -59,7 +66,70 @@ class PathFinder:
                 start_station_name and end_station_name are the same.
         """
         # TODO: Complete this method
-        return [] 
+
+        station_ls = list(self.tubemap.stations.values())
+        #print(set(station_ls))
+
+        for station in station_ls:   #get id from station
+            if start_station_name == station.name:
+                start_id = station.id
+            if end_station_name == station.name:
+                end_id = station.id
+        
+        distances = {node: float("inf") for node in self.graph} #create distances dict
+        distances[start_id] = 0  # Set the source value to 0
+
+        pq = [(0, start_id)]   #find min_distances
+        heapify(pq)
+
+       # Create a set to hold visited nodes
+        visited = set()
+
+        while pq:  # While the priority queue isn't empty  
+            current_distance, current_node = heappop(pq)
+
+            if current_node in visited:  #check visited
+                continue 
+            visited.add(current_node)
+
+            self.graph[current_node].items()
+
+            for neighbor, weight in self.graph[current_node].items():  #Calculate from neighbours
+                # Calculate the distance from current_node to the neighbor
+                min_weight = min([int(connection.time) for connection in weight])
+
+                tentative_distance = current_distance + min_weight
+                if tentative_distance < distances[neighbor]:
+                    distances[neighbor] = tentative_distance
+                    heappush(pq, (tentative_distance, neighbor))
+
+        print(distances)
+
+        predecessors = {node: None for node in self.graph}
+
+        for node, distance in distances.items():
+            for neighbor, weight in self.graph[node].items():
+                min_weight = min([int(connection.time) for connection in weight])
+                if distances[neighbor] == distance + min_weight:
+                    predecessors[neighbor] = node
+
+        #_, predecessors = self.shortest_distances(source)
+
+        path = []
+        current_node = end_id
+
+        # Backtrack from the target node using predecessors
+        while current_node:
+            path.append(self.tubemap.stations.get(current_node))
+            current_node = predecessors[current_node]
+
+        # Reverse the path and return it
+        path.reverse()
+
+        #print(path)
+
+
+        return path
 
 
 def test_shortest_path():
