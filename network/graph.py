@@ -2,7 +2,7 @@ import sys
 import os 
 #print(sys.path)
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+#sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from tube.map import TubeMap
 
@@ -13,26 +13,55 @@ class NeighbourGraphBuilder:
       into several sub-methods, if needed)
     """
 
+
     def __init__(self):
         pass
 
+
     def get_station_ids(self, tubemap):
+        """ Get ids of all the Station instances present in the TubeMap
+
+        Args:
+            tubemap (obj) : An instance of the TubeMap class
+
+        Returns:
+            List: ids of all the Station intances
+        """ 
 
         return list(tubemap.stations)
 
+
     def is_same_station_name(self, station_id, name_id):
+        """ Check wether the given id is same as the id of the Station instance from the Connections object
+
+        Args:
+            station_id (str) : id of the current station node
+            name_id (str): id of the station in the Connections object
+
+        Returns:
+            bool : Wether both the ids are same or not
+        """ 
 
         return station_id == name_id
 
 
     def get_neighbours_for_connections(self, station_id, connections):
-        neighbours = {} #to store neighbouring stations, to get neighbours of the station
+        """ To find the neighbours (connections associated with the current station node) of the current station node
+        Args:
+            station_id (str) : id of the current station node
+            connections (list): A list of Connection object
+
+        Returns:
+            dict 
+        """ 
+
+        neighbours = {} #to store neighbouring stations
+
         for connect in connections: # Iterates on each connection obj
+
             station_ls = [station for station in connect.stations] #converts the station set into list
 
-            #curr_stat_id = [stat.id for stat in station_ls]
-
-            if self.is_same_station_name(station_id, station_ls[0].id): #station_id == station_ls[0].id:
+            if self.is_same_station_name(station_id, station_ls[0].id): 
 
                 if neighbours.get(station_ls[1].id):
                     neighbours[station_ls[1].id].append(connect)
@@ -111,31 +140,14 @@ class NeighbourGraphBuilder:
                 the method should return an empty dict.
         """
         # TODO: Complete this method
+       
+
+        if not isinstance(tubemap, TubeMap): # Check wether the tubemap object is a valid object or not
+            return {}
+        
         graph = {}
 
-        #station_ls = [station for station in tubemap.connections[0].stations]
-
-        for station_id in self.get_station_ids(tubemap):  #list(tubemap.stations): contains list of all station ids , get_station_ids
-            
-            #neighbours = {} #to store neighbouring stations, to get neighbours of the station
-            # for connect in tubemap.connections: # Iterates on each connection obj
-            #     station_ls = [station for station in connect.stations] #converts the station set into list
-
-            #     #curr_stat_id = [stat.id for stat in station_ls]
-
-            #     if station_id == station_ls[0].id:
-
-            #         if neighbours.get(station_ls[1].id):
-            #             neighbours[station_ls[1].id].append(connect)
-            #         else:
-            #             neighbours[station_ls[1].id] = [connect]
-                
-            #     if station_id == station_ls[1].id:
-
-            #         if neighbours.get(station_ls[0].id):
-            #             neighbours[station_ls[0].id].append(connect)
-            #         else:
-            #             neighbours[station_ls[0].id] = [connect]
+        for station_id in self.get_station_ids(tubemap):  
                 
             graph[station_id] = self.get_neighbours_for_connections(station_id, 
                                                                 tubemap.connections)

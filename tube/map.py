@@ -25,6 +25,15 @@ class TubeMap:
 
 
     def load_json(self, filepath):
+        """ Checks wether the filepath is valid or not.
+        
+        Args:
+            filepath (str) : name of the file
+        
+        Returns:
+            dict: Original data if the path of the file is valid, else returns None
+
+        """
         
         try:
             with open(filepath, "r") as jsonfile:
@@ -38,6 +47,14 @@ class TubeMap:
 
 
     def form_station_dict(self, data):
+        """ Creates a Station instance and adds it to the dictionary
+
+        Args:
+            data (dict) : The original json datafile
+
+        Returns:
+            None
+        """
 
         station_ls = data.get("stations")
         for station in station_ls:
@@ -45,10 +62,12 @@ class TubeMap:
             zone = station.get("zone")
             zone_set = set()
             
-            if "." in zone:
-                ind = zone.find(".")
+            if "." in zone: # The case where the station belongs to multiple zones
+
+                ind = zone.find(".") # Get the index of the point
                 zone_set.add(int(zone[:ind]))
                 zone_set.add(int(zone[:ind])+1)
+
             else:
                 zone_set.add(int(zone))
 
@@ -58,6 +77,14 @@ class TubeMap:
 
 
     def form_lines_dict(self, data):
+        """ Creates a Line instance and adds it to the dictionary
+
+        Args:
+            data (dict) : The original json datafile
+
+        Returns:
+            None
+        """        
 
         line_ls = data.get("lines")
 
@@ -66,12 +93,21 @@ class TubeMap:
 
     
     def form_connections_list(self, data):
+        """ Creates a Connection instance and adds it to the list
+
+        Args:
+            data (dict) : The original json datafile
+
+        Returns:
+            None
+        """     
+
         connection_ls = data.get("connections")
 
         for connection in connection_ls:
 
-            station_set = set()
-            station_set.add(self.stations.get(connection.get("station1")))
+            station_set = set() # Add the station instances to the station_set
+            station_set.add(self.stations.get(connection.get("station1"))) # Retrieve the corresponding Station object using stations attribute
             station_set.add(self.stations.get(connection.get("station2")))
 
             self.connections.append(Connection(station_set,
