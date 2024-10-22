@@ -2,7 +2,8 @@ import sys
 import os 
 import heapq # To determine the smallest weighted node in the Djikistra's algorithm
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+#sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 from network.graph import NeighbourGraphBuilder
 
 class PathFinder:
